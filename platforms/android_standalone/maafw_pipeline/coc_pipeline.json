@@ -1,0 +1,79 @@
+{
+  "$schema": "https://github.com/MaaXYZ/MaaFramework/raw/main/tools/pipeline.schema.json",
+  "COC_StartupAndZoomOut": {
+    "doc": "MaaFramework / MaaFwApp 原生 Android APK 独立运行流水线入口：启动部落冲突并执行视角缩放归一化",
+    "action": "StartApp",
+    "package": "com.supercell.clashofclans",
+    "post_delay": 5000,
+    "next": [
+      "COC_CollectResourceBubbles",
+      "COC_CheckBuilderUpgrade",
+      "COC_StartMatchmaking"
+    ]
+  },
+  "COC_CollectResourceBubbles": {
+    "doc": "识别主村庄金币/圣水/黑油气泡并自动点击收菜",
+    "recognition": "TemplateMatch",
+    "template": [
+      "village/bubble_gold.png",
+      "village/bubble_elixir.png",
+      "village/bubble_dark.png"
+    ],
+    "threshold": 0.78,
+    "action": "Click",
+    "post_delay": 350,
+    "next": [
+      "COC_CollectResourceBubbles",
+      "COC_CheckBuilderUpgrade",
+      "COC_StartMatchmaking"
+    ]
+  },
+  "COC_CheckBuilderUpgrade": {
+    "doc": "调用自定义 AutoUpgrader Agent 检查顶部空闲工人与建议列表刷墙",
+    "recognition": "Custom",
+    "custom_recognition": "CocBuilderStatusRecognizer",
+    "action": "Custom",
+    "custom_action": "CocBuilderWallUpgraderAction",
+    "next": [
+      "COC_StartMatchmaking"
+    ]
+  },
+  "COC_StartMatchmaking": {
+    "doc": "点击左下角进攻并搜索对手",
+    "recognition": "TemplateMatch",
+    "template": "village/btn_attack.png",
+    "action": "Click",
+    "post_delay": 800,
+    "next": [
+      "COC_ClickFindMatch"
+    ]
+  },
+  "COC_ClickFindMatch": {
+    "recognition": "TemplateMatch",
+    "template": "village/btn_find_match.png",
+    "action": "Click",
+    "post_delay": 2500,
+    "next": [
+      "COC_EvaluateEnemyLoot"
+    ]
+  },
+  "COC_EvaluateEnemyLoot": {
+    "doc": "OCR读取左上角金水黑油，达标则进入红线智能下兵，不达标则点下一个",
+    "recognition": "Custom",
+    "custom_recognition": "CocLootOcrRecognizer",
+    "action": "Custom",
+    "custom_action": "CocRedZoneSmartDeployAction",
+    "on_error": [
+      "COC_ClickNextBase"
+    ]
+  },
+  "COC_ClickNextBase": {
+    "recognition": "TemplateMatch",
+    "template": "battle/btn_next.png",
+    "action": "Click",
+    "post_delay": 2200,
+    "next": [
+      "COC_EvaluateEnemyLoot"
+    ]
+  }
+}

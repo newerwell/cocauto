@@ -1,0 +1,73 @@
+# 《部落冲突》跨平台自动化软件 (COC-AutoApp) 默认全局配置文件
+# 支持电脑端 (安卓模拟器) 与 手机端 (Termux 本地无线调试 / Shizuku) 100% 共享配置
+
+device:
+  # 设备连接地址:
+  # - 电脑端模拟器: "127.0.0.1:5561" (部落冲突模拟器实例) / "127.0.0.1:16384" / "127.0.0.1:7555" / "auto"
+  # - 手机端独立运行: "127.0.0.1:无线调试端口" 或 "auto"
+  serial: "127.0.0.1:5561"
+  standard_width: 1280
+  standard_height: 720
+  screencap_timeout: 5.0
+  use_maatouch: false
+
+loot_filter:
+  # 联机比赛模式:
+  # - "regular": 常规战 (点击进攻直接搜索，支持 OCR 读取资源并点击“下一个”循环挑鱼)
+  # - "ranked":  排位战 (点击进攻 -> 点击确认 -> 进入战场后不能再次搜索，搜到谁直接智能下兵打谁)
+  match_mode: "regular"
+  auto_attack_on_found: true     # 搜到满足条件的目标鱼(或排位赛进场)后，是否立即自动衔接智能下兵战斗
+  # 自动搜鱼过滤条件: 满足 (金>=min_gold 且 水>=min_elixir) 或 (金+水>=min_gold_plus_elixir) 或 (黑油>=min_dark) 即开打
+  min_gold: 450000
+  min_elixir: 450000
+  min_gold_plus_elixir: 1000000
+  min_dark_elixir: 4500
+  only_dead_base: false          # 是否仅攻击死鱼 (外围满采集器 >= dead_base_min_collectors)
+  dead_base_min_collectors: 3
+  max_search_clicks: 50          # 单轮最大搜鱼次数，防止网络卡死
+
+combat:
+  # 战斗下兵流派:
+  # - "surround_barch": 四边红线环绕平铺流 (适合超哥/野蛮人弓箭手/死鱼收割)
+  # - "line_air_spam": 单侧红线一字划空军流 (适合雷龙/火龙气球)
+  strategy: "surround_barch"
+  deploy_wave_count: 3           # 分几波沿红线下兵
+  hero_ability_hp_ratio: 0.45    # 英雄血条绿色占比低于 45% 时自动开大招
+  max_battle_duration_sec: 185   # 单场战斗最长监控秒数
+  early_exit_no_loot_sec: 15     # 若资源长达15秒无变化则提前结束战斗
+
+village:
+  collect_resources: true        # 回村自动点击金/水/黑油气泡收菜
+  clear_obstacles: false         # 是否自动清理树木/宝石箱
+  auto_request_cc: true          # 是否自动请求部落援军
+  auto_donate: true              # 是否自动识别部落聊天并捐兵
+  donate_keywords:               # 触发捐兵的关键词白名单
+    - "任意"
+    - "随便"
+    - "打鱼"
+    - "地面"
+    - "空军"
+    - "雷龙"
+    - "气球"
+  donate_blacklist:              # 跳过不捐的限制词黑名单
+    - "不"
+    - "勿"
+    - "只要超级"
+    - "攻城"
+
+upgrade:
+  enable_auto_wall: true         # 是否启用“工人建议列表”自动刷墙
+  enable_auto_building: true     # 是否启用“工人建议列表”自动升级建筑
+  reserve_builders_for_wall: 1   # 预留几名空闲工人专门用于刷墙 (0 表示不预留)
+  wall_min_gold: 4000000         # 金币超过 400 万时触发金币刷墙
+  wall_min_elixir: 4000000       # 圣水超过 400 万时触发圣水刷墙
+  keep_minimum_resource: 1000000 # 升级后至少保留的保底金水，防止不够搜鱼费用
+
+humanizer:
+  click_sigma_px: 6.0            # 点击二维高斯偏移标准差 (像素)
+  click_max_offset_px: 15        # 点击最大允许偏移半径 (像素)
+  min_action_delay_sec: 0.22     # 两次动作之间最小随机等待秒数
+  max_action_delay_sec: 0.65     # 两次动作之间最大随机等待秒数
+  max_session_minutes: 75        # 单次连续挂机时长上限 (分钟)，到点主动休眠防24h检测
+  rest_duration_minutes: 30      # 每次休眠休息时长 (分钟)
+  night_sleep_window: "01:30-07:30" # 夜间仿生睡眠时间窗

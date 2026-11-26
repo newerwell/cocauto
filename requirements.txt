@@ -1,0 +1,6 @@
+av>=14
+numpy>=1.26
+opencv-python>=4.9
+PyQt5>=5.15.10
+PyYAML>=6.0
+rapidocr-onnxruntime>=1.4
